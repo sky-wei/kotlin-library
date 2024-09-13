@@ -1,10 +1,6 @@
-plugins {
-    kotlin("jvm") version "2.0.10"
-}
-
 allprojects {
-    group = "com.github.jingcai-wei.jvm-library"
-    version = "1.0-SNAPSHOT"
+    group = "com.github.sky-wei.jvm-library"
+    version = "1.0.0"
 
     repositories {
         maven { url=uri("https://maven.aliyun.com/repository/public") }
@@ -12,24 +8,4 @@ allprojects {
         maven { url=uri("https://jitpack.io") }
         mavenCentral()
     }
-
-
-}
-
-subprojects {
-
-
-}
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(11)
 }
