@@ -20,8 +20,8 @@ interface IExecute {
 
     /**
      * cmd|sh中执行指定的一组命令(并把执行的结果输出到流中)<br></br>
-     * 例如:Windows{"cmd", "java -version", "exit"}<br></br>
-     * 例如:Linux{"sh", "java -version", "exit"}<br></br>
+     * 例如:Windows{"java -version"}<br></br>
+     * 例如:Linux{"java -version"}<br></br>
      * 使用方法:{"sh|cmd", commands, "exit"}<br></br>
      * @param commands 执行的命令
      * @throws BrutException

@@ -26,14 +26,12 @@ class FileNameExtensionFilter(
     private val lowerCaseExtensions = arrayOfNulls<String>(extensions.size)
 
     init {
-        for (i in extensions.indices) {
-
-            require(extensions[i].isNotEmpty()) {
+        for (index in extensions.indices) {
+            require(extensions[index].isNotEmpty()) {
                 "Each extension must be non-null and not empty"
             }
-
-            this.extensions[i] = extensions[i]
-            lowerCaseExtensions[i] = extensions[i].lowercase()
+            this.extensions[index] = extensions[index]
+            lowerCaseExtensions[index] = extensions[index].lowercase()
         }
     }
 

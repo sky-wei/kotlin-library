@@ -31,7 +31,8 @@ import java.io.OutputStream
 class Execute (
     private val envp: Array<String> = arrayOf(),
     private val workDir: File = File(PlatformUtil.getUserDir()),
-    private val out: OutputStream = System.out
+    private val out: OutputStream = System.out,
+    private val err: OutputStream = System.err
 ) : IExecute {
 
     companion object {
@@ -102,7 +103,7 @@ class Execute (
             val out = process.outputStream
 
             StreamForwarder(`in`, this.out).start()
-            StreamForwarder(ine, this.out).start()
+            StreamForwarder(ine, this.err).start()
 
             OutputExecute(out, resolveCommands(commands)).start()
 
@@ -122,11 +123,13 @@ fun runtime(
     envp: Array<String> = arrayOf(),
     workDir: File = File(PlatformUtil.getUserDir()),
     out: OutputStream = System.out,
+    err: OutputStream = System.err,
     callback: IExecute.() -> Unit
 ) {
     Execute(
         envp = envp,
         workDir = workDir,
-        out = out
+        out = out,
+        err = err
     ).run { callback() }
 }

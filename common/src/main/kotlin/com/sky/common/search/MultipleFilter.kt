@@ -16,24 +16,21 @@
 
 package com.sky.common.search
 
-import kotlin.test.Test
+import java.io.File
+import java.io.FileFilter
 
-class FileSearchTest {
+class MultipleFilter(
+    private val filters: List<FileFilter>
+) : FileFilter {
 
-    @Test
-    fun testSearch() {
+    companion object {
 
-        fileSearch(
-            searchDir = "/media/data/Work/SkyProject/kotlin-library/common/src/test/kotlin/com/sky",
-            filter = MultipleFilter.valueOf(
-                FileNameFilter("Search") {
-                    fullMatch = false
-                },
-                FileNameFilter("ExecuteTest.kt")
-            )
-        ).also {
-            println(it)
-            assert(it.isNotEmpty())
+        fun valueOf(vararg filters: FileFilter): FileFilter {
+            return MultipleFilter(filters.toList())
         }
+    }
+
+    override fun accept(file: File): Boolean {
+        return filters.find { it.accept(file) } != null
     }
 }
