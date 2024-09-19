@@ -19,23 +19,17 @@ import java.io.File
 import java.io.FileFilter
 
 class FileNameFilter(
-    vararg fileNames: String,
-    appendParam: FileNameFilter.() -> Unit = { }
+    builder: Builder
 ) : FileFilter {
 
-    private val fileNames = arrayOfNulls<String>(fileNames.size)
-    private val lowerCaseFileNames = arrayOfNulls<String>(fileNames.size)
-    var fullMatch: Boolean = true
+    private val fileNames = builder.fileNames
+    private val fullMatch: Boolean = builder.fullMatch
+    private val lowerCaseFileNames = ArrayList<String>()
 
     init {
         for (index in fileNames.indices) {
-            require(fileNames[index].isNotEmpty()) {
-                "Each extension must be non-null and not empty"
-            }
-            this.fileNames[index] = fileNames[index]
             lowerCaseFileNames[index] = fileNames[index].lowercase()
         }
-        appendParam()
     }
 
     override fun accept(file: File): Boolean {
@@ -69,4 +63,28 @@ class FileNameFilter(
         // 包含匹配
         return desiredFileName.contains(fileName)
     }
+
+
+    class Builder(init: Builder.() -> Unit) {
+
+        var fileNames: List<String> = arrayListOf()
+        var fullMatch: Boolean = true
+
+        init {
+            init()
+        }
+
+        fun fileName(vararg fileNames: String) {
+            this.fileNames = fileNames.toList()
+        }
+
+        fun build() = FileNameFilter(this)
+    }
 }
+
+fun fileNameFilter(
+    init: FileNameFilter.Builder.() -> Unit
+) = FileNameFilter.Builder(init).build()
+
+
+

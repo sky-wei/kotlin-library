@@ -20,17 +20,44 @@ import java.io.File
 import java.io.FileFilter
 
 class MultipleFilter(
-    private val filters: List<FileFilter>
+    builder: Builder
 ) : FileFilter {
 
-    companion object {
-
-        fun valueOf(vararg filters: FileFilter): FileFilter {
-            return MultipleFilter(filters.toList())
-        }
-    }
+    private val filters: List<FileFilter> = builder.filters
 
     override fun accept(file: File): Boolean {
         return filters.find { it.accept(file) } != null
     }
+
+
+    class Builder(init: Builder.() -> Unit) {
+
+        var filters: List<FileFilter> = arrayListOf()
+
+        init {
+            init()
+        }
+
+        fun filter(vararg filters: FileFilter) {
+            this.filters = filters.toList()
+        }
+
+        fun build() = MultipleFilter(this)
+    }
+}
+
+fun multipleFilter(
+    init: MultipleFilter.Builder.() -> Unit
+) = MultipleFilter.Builder(init).build()
+
+fun multipleFilter(
+    vararg filters: FileFilter
+) = multipleFilter {
+    filter(*filters)
+}
+
+fun multipleFilter(
+    filters: List<FileFilter>
+) = multipleFilter {
+    this.filters = filters
 }

@@ -23,12 +23,8 @@ class ExecuteTest {
     @Test
     fun testExec() {
 
-//        runtime {
-//            insertionExec("ls -all")
-//        }
+//        runtime().localExec("ls -all")
 
-        runtime {
-            exec("java -version")
-        }
+        runtime().exec("java -version")
     }
 }

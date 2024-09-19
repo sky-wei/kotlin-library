@@ -22,13 +22,15 @@ import java.io.FileFilter
 import java.util.*
 
 class FileSearch(
-    private val filter: FileFilter
+    builder: Builder
 ) : IFileSearch {
 
     companion object {
 
         val LOGGER: Logger = LogManager.getLogger(FileSearch::class.java)
     }
+
+    private val filter: FileFilter = builder.filter
 
     override fun search(searchDir: String): List<File> {
         return search(File(searchDir))
@@ -99,6 +101,20 @@ class FileSearch(
     private fun accept(file: File): Boolean {
         return filter.accept(file)
     }
+
+
+    class Builder(init: Builder.() -> Unit) {
+
+        var filter: FileFilter = AllowAllFile
+
+        init {
+            init()
+        }
+
+        fun build(): IFileSearch {
+            return FileSearch(this)
+        }
+    }
 }
 
 
@@ -112,35 +128,9 @@ object AllowAllFile : FileFilter {
 }
 
 
+/**
+ * 文件搜索
+ */
 fun fileSearch(
-    filter: FileFilter = AllowAllFile,
-    callback: IFileSearch.() -> List<File>
-): List<File> {
-    return FileSearch(
-        filter = filter
-    ).run {
-        callback()
-    }
-}
-
-fun fileSearch(
-    searchDir: String,
-    filter: FileFilter = AllowAllFile
-): List<File> {
-    return fileSearch(
-        filter = filter
-    ) {
-        search(searchDir)
-    }
-}
-
-fun fileSearch(
-    searchDir: File,
-    filter: FileFilter = AllowAllFile
-): List<File> {
-    return fileSearch(
-        filter = filter
-    ) {
-        search(searchDir)
-    }
-}
+    init: FileSearch.Builder.() -> Unit = { }
+): IFileSearch = FileSearch.Builder(init).build()

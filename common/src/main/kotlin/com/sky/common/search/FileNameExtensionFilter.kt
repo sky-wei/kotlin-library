@@ -15,22 +15,19 @@
  */
 package com.sky.common.search
 
+import com.sky.common.search.FileNameFilter.Builder
 import java.io.File
 import java.io.FileFilter
 
 class FileNameExtensionFilter(
-    vararg extensions: String
+    builder: Builder
 ) : FileFilter {
 
-    private val extensions = arrayOfNulls<String>(extensions.size)
-    private val lowerCaseExtensions = arrayOfNulls<String>(extensions.size)
+    private val extensions = builder.extensions
+    private val lowerCaseExtensions = ArrayList<String>()
 
     init {
         for (index in extensions.indices) {
-            require(extensions[index].isNotEmpty()) {
-                "Each extension must be non-null and not empty"
-            }
-            this.extensions[index] = extensions[index]
             lowerCaseExtensions[index] = extensions[index].lowercase()
         }
     }
@@ -58,4 +55,24 @@ class FileNameExtensionFilter(
         }
         return false
     }
+
+
+    class Builder(init: Builder.() -> Unit) {
+
+        var extensions: List<String> = arrayListOf()
+
+        init {
+            init()
+        }
+
+        fun extensionName(vararg extensions: String) {
+            this.extensions = extensions.toList()
+        }
+
+        fun build() = FileNameExtensionFilter(this)
+    }
 }
+
+fun fileNameExtensionFilter(
+    init: FileNameExtensionFilter.Builder.() -> Unit
+) = FileNameExtensionFilter.Builder(init).build()

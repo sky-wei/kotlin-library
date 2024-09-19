@@ -29,16 +29,18 @@ import java.io.OutputStream
  * @author sky
  */
 class Execute (
-    private val envp: Array<String> = arrayOf(),
-    private val workDir: File = File(PlatformUtil.getUserDir()),
-    private val out: OutputStream = System.out,
-    private val err: OutputStream = System.err
+    builder: Builder
 ) : IExecute {
 
     companion object {
 
         val LOGGER: Logger = LogManager.getLogger(Execute::class.java)
     }
+
+    private val envp: Array<String> = builder.envp
+    private val workDir: File = builder.workDir
+    private val out: OutputStream = builder.out
+    private val err: OutputStream = builder.err
 
     /**
      * 把一组String[]命令转换成List,并且跳过第一个命令
@@ -62,7 +64,7 @@ class Execute (
      * @throws BrutException
      */
     @Throws(BrutException::class)
-    override fun insertionExec(vararg commands: String) {
+    override fun localExec(vararg commands: String) {
 
         val newCommands = arrayListOf<String>()
 
@@ -116,20 +118,24 @@ class Execute (
             process?.destroy()
         }
     }
+
+
+    class Builder(init: Builder.() -> Unit) {
+
+        var envp: Array<String> = arrayOf()
+        var workDir: File = File(PlatformUtil.getUserDir())
+        var out: OutputStream = System.out
+        var err: OutputStream = System.err
+
+        init {
+            init()
+        }
+
+        fun build(): IExecute = Execute(this)
+    }
 }
 
 
 fun runtime(
-    envp: Array<String> = arrayOf(),
-    workDir: File = File(PlatformUtil.getUserDir()),
-    out: OutputStream = System.out,
-    err: OutputStream = System.err,
-    callback: IExecute.() -> Unit
-) {
-    Execute(
-        envp = envp,
-        workDir = workDir,
-        out = out,
-        err = err
-    ).run { callback() }
-}
+    init: Execute.Builder.() -> Unit = { }
+): IExecute = Execute.Builder(init).build()

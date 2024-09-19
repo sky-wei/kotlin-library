@@ -27,7 +27,7 @@ interface IExecute {
      * @throws BrutException
      */
     @Throws(BrutException::class)
-    fun insertionExec(vararg commands: String)
+    fun localExec(vararg commands: String)
 
     /**
      * 执行指定的一组命令(并把执行的结果输出到流中)<br></br>

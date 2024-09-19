@@ -23,14 +23,18 @@ class FileSearchTest {
     @Test
     fun testSearch() {
 
-        fileSearch(
-            searchDir = "/media/data/Work/SkyProject/kotlin-library/common/src/test/kotlin/com/sky",
-            filter = MultipleFilter.valueOf(
-                FileNameFilter("Search") {
+        fileSearch {
+            filter = multipleFilter(
+                fileNameFilter {
                     fullMatch = false
+                    fileName("Search")
                 },
-                FileNameFilter("ExecuteTest.kt")
+                fileNameFilter {
+                    fileName("ExecuteTest.kt")
+                }
             )
+        }.search(
+            "/media/data/Work/SkyProject/kotlin-library/common/src/test/kotlin/com/sky"
         ).also {
             println(it)
             assert(it.isNotEmpty())
